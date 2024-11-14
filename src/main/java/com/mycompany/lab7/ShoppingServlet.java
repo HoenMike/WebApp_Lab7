@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -141,6 +142,12 @@ public class ShoppingServlet extends HttpServlet {
         List<CartItem> cart = (List<CartItem>) request.getSession().getAttribute("cart");
         AccountBean account = (AccountBean) request.getSession().getAttribute("account");
 
+        if (account == null) {
+            // If the account is not set, redirect to the account page
+            showAccount(request, response);
+            return;
+        }
+
         double total = 0;
         for (CartItem item : cart) {
             total += item.getProduct().getPrice() * item.getQuantity();
@@ -175,14 +182,16 @@ public class ShoppingServlet extends HttpServlet {
 
     private List<ProductBean> getProductsFromDatabase() {
         List<ProductBean> products = new ArrayList<>();
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD); PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Product"); ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                int productId = rs.getInt("productID");
-                String name = rs.getString("name");
-                String manufacturer = rs.getString("manufacturer");
-                String country = rs.getString("country");
-                double price = rs.getDouble("price");
-                products.add(new ProductBean(productId, name, manufacturer, country, price));
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD); PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Product")) {
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    int productId = rs.getInt("productID");
+                    String name = rs.getString("name");
+                    String manufacturer = rs.getString("manufacturer");
+                    String country = rs.getString("country");
+                    double price = rs.getDouble("price");
+                    products.add(new ProductBean(productId, name, manufacturer, country, price));
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -209,7 +218,7 @@ public class ShoppingServlet extends HttpServlet {
     }
 
     private void saveAccountToDatabase(AccountBean account) {
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD); PreparedStatement stmt = conn.prepareStatement("INSERT INTO Customer (name, visaNumber, address) VALUES (?, ?, ?)")) {
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD); PreparedStatement stmt = conn.prepareStatement("INSERT INTO customer (name, visaNumber, address) VALUES (?, ?, ?)")) {
             stmt.setString(1, account.getName());
             stmt.setString(2, account.getVisaNumber());
             stmt.setString(3, account.getAddress());
@@ -224,7 +233,7 @@ public class ShoppingServlet extends HttpServlet {
             conn.setAutoCommit(false);
 
             // Insert the customer
-            PreparedStatement customerStmt = conn.prepareStatement("INSERT INTO Customer (name, visaNumber, address) VALUES (?, ?, ?)");
+            PreparedStatement customerStmt = conn.prepareStatement("INSERT INTO customer (name, visaNumber, address) VALUES (?, ?, ?)");
             customerStmt.setString(1, account.getName());
             customerStmt.setString(2, account.getVisaNumber());
             customerStmt.setString(3, account.getAddress());
@@ -241,7 +250,7 @@ public class ShoppingServlet extends HttpServlet {
             }
 
             // Insert the order
-            PreparedStatement orderStmt = conn.prepareStatement("INSERT INTO `Order` (customerID, orderDate, totalAmount) VALUES (?, CURDATE(), ?)");
+            PreparedStatement orderStmt = conn.prepareStatement("INSERT INTO `order` (customerID, orderDate, totalAmount) VALUES (?, CURDATE(), ?)");
             double total = 0;
             for (CartItem item : cart) {
                 total += item.getProduct().getPrice() * item.getQuantity();
@@ -273,6 +282,35 @@ public class ShoppingServlet extends HttpServlet {
             conn.commit();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void createRandomProduct() {
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD); PreparedStatement stmt = conn.prepareStatement("INSERT INTO Product (name, manufacturer, country, price) VALUES (?, ?, ?, ?)")) {
+            // Generate random product data
+            String[] names = {"Product A", "Product B", "Product C", "Product D", "Product E"};
+            String[] manufacturers = {"Manufacturer X", "Manufacturer Y", "Manufacturer Z"};
+            String[] countries = {"USA", "Canada", "Mexico"};
+            Random rand = new Random();
+
+            String name = names[rand.nextInt(names.length)];
+            String manufacturer = manufacturers[rand.nextInt(manufacturers.length)];
+            String country = countries[rand.nextInt(countries.length)];
+            double price = (rand.nextDouble() * 100) + 10;
+
+            stmt.setString(1, name);
+            stmt.setString(2, manufacturer);
+            stmt.setString(3, country);
+            stmt.setDouble(4, price);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void createRandomProducts(int count) {
+        for (int i = 0; i < count; i++) {
+            createRandomProduct();
         }
     }
 }
