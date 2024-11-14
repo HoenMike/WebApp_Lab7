@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.util.List, com.example.beans.ProductBean, com.example.beans.AccountBean, com.example.beans.OrderBean" %>
+<%@ page import="java.util.List, com.mycompany.lab7.ProductBean, com.mycompany.lab7.AccountBean, com.mycompany.lab7.OrderBean" %>
 <!DOCTYPE html>
 <html>
 <head>
