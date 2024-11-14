@@ -8,12 +8,4 @@
             30
         </session-timeout>
     </session-config>
-    <servlet>
-        <servlet-name>ShoppingServlet</servlet-name>
-        <servlet-class>com.mycompany.lab7.ShoppingServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ShoppingServlet</servlet-name>
-        <url-pattern>/shop</url-pattern>
-    </servlet-mapping>
 </web-app>

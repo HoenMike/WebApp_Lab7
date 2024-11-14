@@ -5,3 +5,4 @@ com\mycompany\lab7\AccountBean.class
 com\mycompany\lab7\OrderBean.class
 com\mycompany\lab7\DBConnection.class
 com\mycompany\lab7\JakartaRestConfiguration.class
+com\mycompany\lab7\CartItem.class

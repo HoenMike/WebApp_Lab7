@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="com.mycompany.lab7.AccountBean" %>
 <!DOCTYPE html>
 <html>
 	<head>
+		<meta charset="UTF-8" />
 		<title>Account Information</title>
 		<link
 			rel="stylesheet"
@@ -10,16 +10,16 @@
 		/>
 	</head>
 	<body>
-		<div class="container mt-5">
+		<div class="container my-5">
 			<h1 class="mb-4">Enter Account Information</h1>
-			<form action="shop" method="post">
+			<form action="ShoppingServlet" method="post">
 				<input type="hidden" name="action" value="account" />
 				<div class="form-group">
 					<label for="name">Name:</label>
 					<input type="text" class="form-control" id="name" name="name" required />
 				</div>
 				<div class="form-group">
-					<label for="visaNumber">Visa Number:</label>
+					<label for="visaNumber">VISA Number:</label>
 					<input type="text" class="form-control" id="visaNumber" name="visaNumber" required />
 				</div>
 				<div class="form-group">
