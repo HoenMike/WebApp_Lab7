@@ -4,29 +4,44 @@
 <html>
 <head>
     <title>Checkout</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <h1>Checkout</h1>
-    <% List<ProductBean> cart = (List<ProductBean>) request.getAttribute("cart");
-       AccountBean account = (AccountBean) request.getAttribute("account");
-       OrderBean order = (OrderBean) request.getAttribute("order"); %>
-    <table>
-        <tr><th>Product</th><th>Quantity</th><th>Price</th></tr>
-        <% for (ProductBean product : cart) { %>
-        <tr>
-            <td><%= product.getName() %></td>
-            <td><%= request.getParameter("quantity-" + product.getProductID()) %></td>
-            <td><%= product.getPrice() %></td>
-        </tr>
-        <% } %>
-        <tr><td colspan="2">Total:</td><td><%= order.getTotalAmount() %></td></tr>
-    </table>
-    <p>Logged in as: <%= account.getName() %></p>
-    <p>Visa Number: <%= account.getVisaNumber() %></p>
-    <p>Address: <%= account.getAddress() %></p>
-    <form action="shopping" method="post">
-        <input type="hidden" name="action" value="complete">
-        <input type="submit" value="Complete Order">
-    </form>
+    <div class="container mt-5">
+        <h1 class="mb-4">Checkout</h1>
+        <% List<ProductBean> cart = (List<ProductBean>) request.getAttribute("cart");
+           AccountBean account = (AccountBean) request.getAttribute("account");
+           OrderBean order = (OrderBean) request.getAttribute("order"); %>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (ProductBean product : cart) { %>
+                <tr>
+                    <td><%= product.getName() %></td>
+                    <td><%= request.getParameter("quantity-" + product.getProductID()) %></td>
+                    <td><%= product.getPrice() %></td>
+                </tr>
+                <% } %>
+                <tr>
+                    <td colspan="2">Total:</td>
+                    <td><%= order.getTotalAmount() %></td>
+                </tr>
+            </tbody>
+        </table>
+        <p>Logged in as: <%= account.getName() %></p>
+        <p>Visa Number: <%= account.getVisaNumber() %></p>
+        <p>Address: <%= account.getAddress() %></p>
+        <form action="shop" method="post">
+            <input type="hidden" name="action" value="complete">
+            <button type="submit" class="btn btn-primary">Complete Order</button>
+            <a href="products.jsp" class="btn btn-secondary">Shop Some More!</a>
+        </form>
+    </div>
 </body>
 </html>
