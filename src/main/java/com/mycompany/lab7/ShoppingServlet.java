@@ -27,6 +27,14 @@ public class ShoppingServlet extends HttpServlet {
     private static final String DB_USERNAME = "hoenmike";
     private static final String DB_PASSWORD = "Crtm123123";
 
+    static {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         if (action != null) {
@@ -233,7 +241,7 @@ public class ShoppingServlet extends HttpServlet {
             conn.setAutoCommit(false);
 
             // Insert the customer
-            PreparedStatement customerStmt = conn.prepareStatement("INSERT INTO customer (name, visaNumber, address) VALUES (?, ?, ?)");
+            PreparedStatement customerStmt = conn.prepareStatement("INSERT INTO customer (name, visaNumber, address) VALUES (?, ?, ?)", PreparedStatement.RETURN_GENERATED_KEYS);
             customerStmt.setString(1, account.getName());
             customerStmt.setString(2, account.getVisaNumber());
             customerStmt.setString(3, account.getAddress());
@@ -250,7 +258,7 @@ public class ShoppingServlet extends HttpServlet {
             }
 
             // Insert the order
-            PreparedStatement orderStmt = conn.prepareStatement("INSERT INTO `order` (customerID, orderDate, totalAmount) VALUES (?, CURDATE(), ?)");
+            PreparedStatement orderStmt = conn.prepareStatement("INSERT INTO `order` (customerID, orderDate, totalAmount) VALUES (?, CURDATE(), ?)", PreparedStatement.RETURN_GENERATED_KEYS);
             double total = 0;
             for (CartItem item : cart) {
                 total += item.getProduct().getPrice() * item.getQuantity();
